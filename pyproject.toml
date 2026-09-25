@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "student-directory-api"
+version = "1.0.0"
+description = "API REST Django pour un annuaire étudiant"
+requires-python = ">=3.12"
+dependencies = ["Django>=6.1,<6.2"]
+
+[project.optional-dependencies]
+dev = ["ruff>=0.6,<1"]
+
+[tool.setuptools.packages.find]
+include = ["config*", "students*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

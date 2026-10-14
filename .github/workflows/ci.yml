@@ -1,31 +1,38 @@
 name: CI
-"on":
+on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
 permissions:
   contents: read
-
 jobs:
-  quality:
-    name: Lint and tests (Python ${{ matrix.python-version }})
+  tp1:
+    name: TP1 lint and tests
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.12", "3.13"]
+    defaults:
+      run:
+        working-directory: TP1
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: python -m pip install -e ".[dev]"
-      - name: Lint
-        run: ruff check .
-      - name: Test
-        run: python manage.py test
+          python-version: "3.13"
+      - run: python -m pip install -e ".[dev]"
+      - run: ruff check .
+      - run: python manage.py test
+  tp2:
+    name: TP2 lint, tests, and coverage
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: TP2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install -e ".[dev]"
+      - run: ruff check .
+      - run: coverage run manage.py test
+      - run: coverage report --fail-under=80

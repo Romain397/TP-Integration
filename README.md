@@ -18,3 +18,5 @@ Le workflow GitHub Actions à la racine exécute le lint et les tests des projet
 | TP3 | 36 tests, audit de production sans vulnérabilité, CodeQL, image non-root sans CVE HIGH/CRITICAL détectée |
 
 Les corrections et les preuves sont conservées dans la [PR n° 1](https://github.com/Romain397/TP-Integration/pull/1). Les trois projets sont réunis sur `main`, protégée par une PR obligatoire et les contrôles CI et sécurité.
+
+L'ancien historique local du TP1 Flask est également conservé par fusion dans `main` (dernier commit de cette version : `2fff1d9`). La version active du TP1 est celle de `TP1/` avec Django ; les anciens fichiers Flask restent consultables dans l'historique Git.

@@ -69,6 +69,8 @@ npm test --prefix .artifacts/baseline -- --runTestsByPath tests/security.test.js
 
 Résultats attendus et vérifiés : les 2 tests initiaux passent, l'audit retourne un code d'échec, puis les 3 régressions échouent. Les processus sont simulés dans les tests : aucune commande injectée n'est exécutée. Le code vulnérable est archivé en texte dans `baseline/app.js.txt` et matérialisé uniquement dans `.artifacts/`, ignoré par Git.
 
+Les manifestes initiaux sont également archivés en texte (`baseline/package.json.txt` et `baseline/package-lock.json.txt`). Le script les matérialise dans le même bac à sable. Ils restent reproductibles pour l'audit avant/après, sans être considérés comme des dépendances actives par le graphe GitHub ni provoquer des PR Dependabot sur le code volontairement vulnérable.
+
 ### 3. Les trois failles et leurs régressions
 
 Les URL ci-dessous désignent uniquement l'ancienne application locale, jamais un service tiers.

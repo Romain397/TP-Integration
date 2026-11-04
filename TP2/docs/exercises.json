@@ -1,0 +1,209 @@
+{
+  "recordedAt": "2026-11-04T13:42:32.068921+00:00",
+  "scope": "Explicit replay in a disposable copy; not a claim about original commit chronology",
+  "a3": [
+    {
+      "mutation": "average: division replaced by multiplication",
+      "red": {
+        "passed": false,
+        "summary": [
+          "AssertionError: 108 != 12",
+          "AssertionError: 15 != 1.67",
+          "Ran 18 tests in 0.001s",
+          "FAILED (failures=2)"
+        ]
+      },
+      "restored": {
+        "passed": true,
+        "summary": [
+          "Ran 18 tests in 0.001s",
+          "OK"
+        ]
+      }
+    },
+    {
+      "mutation": "email: mandatory @ removed from the pattern",
+      "red": {
+        "passed": false,
+        "summary": [
+          "AssertionError: False != True",
+          "AssertionError: False != True",
+          "Ran 24 tests in 0.002s",
+          "FAILED (failures=2)"
+        ]
+      },
+      "restored": {
+        "passed": true,
+        "summary": [
+          "Ran 24 tests in 0.001s",
+          "OK"
+        ]
+      }
+    },
+    {
+      "mutation": "capitalize: lower() removed",
+      "red": {
+        "passed": false,
+        "summary": [
+          "AssertionError: 'WORLD' != 'World'",
+          "Ran 18 tests in 0.001s",
+          "FAILED (failures=1)"
+        ]
+      },
+      "restored": {
+        "passed": true,
+        "summary": [
+          "Ran 18 tests in 0.001s",
+          "OK"
+        ]
+      }
+    }
+  ],
+  "a4": [
+    {
+      "newTest": "sort_grade_ascending",
+      "before": {
+        "passed": false,
+        "summary": [
+          "Ran 1 test in 0.001s",
+          "FAILED (errors=1)"
+        ]
+      },
+      "after": {
+        "passed": true,
+        "summary": [
+          "Ran 1 test in 0.000s",
+          "OK"
+        ]
+      }
+    },
+    {
+      "newTest": "sort_grade_descending",
+      "before": {
+        "passed": false,
+        "summary": [
+          "AssertionError: Lists differ: [12, 18] != [18, 12]",
+          "Ran 2 tests in 0.001s",
+          "FAILED (failures=1)"
+        ]
+      },
+      "after": {
+        "passed": true,
+        "summary": [
+          "Ran 2 tests in 0.000s",
+          "OK"
+        ]
+      }
+    },
+    {
+      "newTest": "sort_name_ascending",
+      "before": {
+        "passed": false,
+        "summary": [
+          "AssertionError: Lists differ: ['Zoé', 'Adam'] != ['Adam', 'Zoé']",
+          "Ran 3 tests in 0.002s",
+          "FAILED (failures=1)"
+        ]
+      },
+      "after": {
+        "passed": true,
+        "summary": [
+          "Ran 3 tests in 0.000s",
+          "OK"
+        ]
+      }
+    },
+    {
+      "newTest": "sort_age_ascending",
+      "before": {
+        "passed": true,
+        "summary": [
+          "Ran 4 tests in 0.000s",
+          "OK"
+        ]
+      },
+      "after": {
+        "passed": true,
+        "summary": [
+          "Ran 4 tests in 0.000s",
+          "OK"
+        ]
+      }
+    },
+    {
+      "newTest": "sort_null",
+      "before": {
+        "passed": false,
+        "summary": [
+          "Ran 5 tests in 0.001s",
+          "FAILED (errors=1)"
+        ]
+      },
+      "after": {
+        "passed": true,
+        "summary": [
+          "Ran 5 tests in 0.000s",
+          "OK"
+        ]
+      }
+    },
+    {
+      "newTest": "sort_empty",
+      "before": {
+        "passed": true,
+        "summary": [
+          "Ran 6 tests in 0.000s",
+          "OK"
+        ]
+      },
+      "after": {
+        "passed": true,
+        "summary": [
+          "Ran 6 tests in 0.000s",
+          "OK"
+        ]
+      }
+    },
+    {
+      "newTest": "sort_without_mutating",
+      "before": {
+        "passed": true,
+        "summary": [
+          "Ran 7 tests in 0.000s",
+          "OK"
+        ]
+      },
+      "after": {
+        "passed": true,
+        "summary": [
+          "Ran 7 tests in 0.000s",
+          "OK"
+        ]
+      }
+    },
+    {
+      "newTest": "sort_ascending_by_default",
+      "before": {
+        "passed": true,
+        "summary": [
+          "Ran 8 tests in 0.000s",
+          "OK"
+        ]
+      },
+      "after": {
+        "passed": true,
+        "summary": [
+          "Ran 8 tests in 0.000s",
+          "OK"
+        ]
+      }
+    }
+  ],
+  "finalRefactor": {
+    "passed": true,
+    "summary": [
+      "Ran 10 tests in 0.000s",
+      "OK"
+    ]
+  }
+}

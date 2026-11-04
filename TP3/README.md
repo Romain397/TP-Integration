@@ -21,7 +21,7 @@ L'API écoute sur `http://localhost:3000`. `PORT` peut être fourni par l'enviro
 | --- | --- | --- |
 | GET | `/health` | `200`, `{"status":"ok"}` |
 | GET | `/hello?name=Lina` | Message HTML avec caractères spéciaux échappés |
-| GET | `/ping?host=example.com` | Un ping sans shell ; 400 si invalide, 502 si injoignable |
+| GET | `/ping?host=example.com` | Un ping sans shell ; 400 si invalide, 502 si injoignable, 429 si la limite est atteinte |
 | GET | `/prefs?theme=dark&lang=en` | Préférences validées ; thèmes `light/dark`, langues `fr/en` |
 
 ## Sécurité & coûts
@@ -29,7 +29,7 @@ L'API écoute sur `http://localhost:3000`. `PORT` peut être fourni par l'enviro
 [![CI](https://github.com/Romain397/TP-Integration/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Romain397/TP-Integration/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/Romain397/TP-Integration/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Romain397/TP-Integration/actions/workflows/codeql.yml)
 
-Les badges refléteront les exécutions après publication sur `main`. Ils ne constituent pas une preuve d'exécution locale.
+Les badges suivent `main`. La [PR n° 1](https://github.com/Romain397/TP-Integration/pull/1) conserve les exécutions CI et CodeQL réalisées avant la fusion.
 
 ### 1. Secrets et clé AWS publiée
 
@@ -42,7 +42,7 @@ Les fichiers `.gitignore` excluent `node_modules/`, `.env`, `coverage/`, les log
 3. Créer un remplacement uniquement si nécessaire, avec les droits minimaux, mettre à jour les consommateurs dans un gestionnaire de secrets, puis supprimer définitivement l'ancienne clé. Pour GitHub Actions, préférer OIDC et des identifiants temporaires.
 4. Nettoyer l'historique avec un outil adapté, coordonner la réécriture et les clones, puis activer/vérifier secret scanning et push protection. Le nettoyage ne remplace jamais la révocation.
 
-La capture de **Settings → Code security → Secret Protection / Push protection** doit être ajoutée après activation effective. Ces réglages distants ne sont pas simulés par les fichiers du projet.
+**Secret Protection et Push protection sont activées sur GitHub**, état vérifié le 4 novembre 2026. La [preuve JSON issue de l'API GitHub](reports/github-security-settings.json) et sa [capture du contrôle API](reports/github-security-settings.png) consignent les paramètres réels. Cette capture représente le contrôle API, pas la page Settings du navigateur.
 
 ### 2. Dépendances
 
@@ -55,7 +55,7 @@ Audits réels conservés dans [reports/npm-audit-before.json](reports/npm-audit-
 
 Le job `deps-audit` exécute `npm audit --audit-level=high` sur l'ensemble des dépendances. Les alertes restantes dans ce relevé proviennent de l'outillage Jest et de ses dépendances ; elles ne sont pas incluses dans l'image de production. L'[audit des dépendances de production](reports/npm-audit-production.json) (`npm audit --omit=dev`) ne trouve aucune vulnérabilité. Le seuil demandé bloque les niveaux High et Critical. Une mise à jour forcée qui rétrograderait Jest n'a pas été appliquée.
 
-Dependabot couvre `npm` dans `/TP3`, `github-actions` à la racine et `docker` dans `/TP3`, chaque semaine. Les alertes et mises à jour de sécurité Dependabot nécessitent aussi leur activation dans les paramètres GitHub.
+Dependabot couvre `npm` dans `/TP3`, `github-actions` à la racine et `docker` dans `/TP3`, chaque semaine. Les alertes et mises à jour de sécurité Dependabot sont également activées sur le dépôt ; leur état est consigné dans la preuve GitHub ci-dessus.
 
 Pour reproduire l'état initial dans un dossier isolé :
 
@@ -81,7 +81,7 @@ Les URL ci-dessous désignent uniquement l'ancienne application locale, jamais u
 
 **Précision sur `/prefs` :** le sujet présente cette route comme une pollution de prototype. Avec les versions exactes fournies, cette URL ne prouve pas à elle seule une modification de `Object.prototype` : des protections existent déjà dans Lodash 4.17.15. Le défaut démontré est l'acceptation d'une structure hors schéma ; par exemple `/prefs?isAdmin=true` ajoute une préférence arbitraire à la réponse initiale. Aucun contrôle d'autorisation du TP ne consomme ce champ : une élévation de privilèges effective n'est donc pas démontrée. Le test exige désormais le rejet de la tentative et l'absence de propriété globale polluée.
 
-`tests/security.test.js` contient une régression pour chaque faille, ainsi que des cas de types incorrects, tableaux, valeurs imbriquées, options de commande et entrées trop longues. Les **35 tests passent**, avec **100 % des lignes** et **96,66 % des branches** couvertes dans `src/app.js`. Les preuves synthétiques figurent dans [reports/verification.json](reports/verification.json). La vérification locale utilise Node 24.14.0 ; le CI et l'image ciblent Node 22.
+`tests/security.test.js` contient une régression pour chaque faille, ainsi que des cas de types incorrects, tableaux, valeurs imbriquées, options de commande et entrées trop longues. Les **36 tests passent**, avec **100 % des lignes** et **96,66 % des branches** couvertes dans `src/app.js`. Les preuves synthétiques figurent dans [reports/verification.json](reports/verification.json). La vérification locale utilise Node 24.14.0 ; le CI et l'image ciblent Node 22.
 
 Lignes de la copie initiale `baseline/app.js.txt` à comparer aux alertes GitHub :
 
@@ -91,7 +91,9 @@ Lignes de la copie initiale `baseline/app.js.txt` à comparer aux alertes GitHub
 | Commande | ligne 17 | [`js/command-line-injection`](https://codeql.github.com/codeql-query-help/javascript/js-command-line-injection/) | 9.8 (Critical) |
 | Fusion non contrôlée | ligne 26 | Revue manuelle ; ne pas inventer une troisième alerte | Non mesurée par CodeQL localement |
 
-Ce tableau décrit des règles de référence, pas des alertes reçues. L'analyse GitHub n'a pas été exécutée ici. Le workflow CodeQL fourni utilise la configuration avancée et analyse `TP3/src` avec `security-extended`. **Ne pas activer simultanément Default setup** : choisir Advanced setup pour ce workflow. Pour obtenir les alertes avant/après exigées, analyser la version initiale dans une branche de travail, relever les vrais résultats, puis ouvrir une PR `fix/security` avec les corrections. Le rendu actuel contient déjà les corrections ; il ne prétend pas avoir réalisé cette chronologie distante.
+Ce tableau décrit les règles de référence pour le code initial, pas trois alertes reçues. Le workflow CodeQL utilise la configuration avancée et analyse `TP3/src` avec `security-extended`. **Ne pas activer simultanément Default setup.** L'analyse a été exécutée sur la PR n° 1 : elle a détecté une alerte supplémentaire High, `js/missing-rate-limiting`, sur `/ping`. Une limite de dix pings réussis par minute et par IP a été ajoutée avec `express-rate-limit`, et `tests/rate-limit.test.js` vérifie le refus du onzième appel sans nouveau processus. La dernière version analysée n'a **aucune alerte CodeQL ouverte** ; voir la preuve GitHub.
+
+Le compteur du limiteur est en mémoire, adapté à la tâche unique étudiée. En cas de déploiement derrière l'ALB, configurer les proxys de confiance selon le réseau réel ; le proxy n'est pas déclaré fiable par défaut. Plusieurs tâches nécessiteraient un compteur partagé pour une limite globale.
 
 ### 4. Pipeline durci et incident Trivy
 
@@ -124,9 +126,9 @@ Le script reconstruit la baseline naïve, puis la version optimisée, mesure les
 | Image | Taille (MiB) | Couches filesystem | CVE HIGH | CVE CRITICAL |
 | --- | ---: | ---: | ---: | ---: |
 | Naïve | 1 619,41 | 11 | 532 | 20 |
-| Optimisée | 238,45 | 9 | 0 | 0 |
+| Optimisée | 239,27 | 9 | 0 | 0 |
 
-Mesures réalisées le **4 novembre 2026**, en Linux/AMD64 : réduction de taille d'environ **85,3 %**. Le test HTTP renvoie `200 {"status":"ok"}`, et l'utilisateur configuré est `node`. Sur les 552 occurrences High/Critical de l'image naïve, 85 disposaient d'un correctif lors du scan ; l'image optimisée n'en conserve aucune. Les résultats bruts sont dans [reports/images.json](reports/images.json), `reports/history-*.jsonl` et `reports/trivy-*.json`.
+Mesures réalisées le **4 novembre 2026**, après ajout du limiteur, en Linux/AMD64 : réduction de taille d'environ **85,2 %**. Le test HTTP renvoie `200 {"status":"ok"}`, et l'utilisateur configuré est `node`. Sur les 552 occurrences High/Critical de l'image naïve, 85 disposaient d'un correctif lors du scan ; l'image optimisée n'en conserve aucune. Les résultats bruts sont dans [reports/images.json](reports/images.json), `reports/history-*.jsonl` et `reports/trivy-*.json`.
 
 **Réponse sur les couches et fichiers :** la plus grosse couche mesurée dans l'image naïve pèse **618 938 368 octets (590,27 MiB)** et installe notamment `autoconf`/`automake` et les outils de compilation de l'image Node Debian de base ; voir `reports/history-naif.jsonl`. Le Dockerfile naïf utilise `COPY . .` sans `.dockerignore` ; si `.env` ou `.git` existent dans son contexte, ils entrent dans l'image. `.gitignore` n'a aucun effet sur Docker. Supprimer un secret dans une couche suivante ne l'efface pas des couches précédentes.
 
@@ -189,12 +191,14 @@ Prérequis pour une utilisation future, hors exécution du TP :
 - droits minimaux ECR push, ECS register/describe/update et `iam:PassRole` sur les deux rôles de tâche uniquement ; rôle execution autorisé au pull ECR et à l'écriture des logs ;
 - infrastructure, log group et service préexistants, ALB vérifiant `/health`, politique de rétention ECR appliquée.
 
-### État du rendu et réglages GitHub à terminer
+### État du rendu et vérifications GitHub
 
-Les fichiers applicatifs, tests, lockfiles, audits, Docker, workflows, étude et bonus sont présents. Les changements sont publiés en plusieurs commits sur la branche [`django-main`](https://github.com/Romain397/TP-Integration/tree/django-main). Leur intégration dans `main` et les réglages de sécurité GitHub restent à effectuer.
+Les trois TP sont regroupés dans le dépôt public `Romain397/TP-Integration`, selon l'organisation demandée. La [PR n° 1](https://github.com/Romain397/TP-Integration/pull/1) réunit les changements en conservant l'historique des commits ; la branche finale est `main`.
 
-1. Ouvrir une [PR de `django-main` vers `main`](https://github.com/Romain397/TP-Integration/compare/main...django-main) pour lancer les contrôles. Pour le nom strictement demandé par le sujet, créer un dépôt public `devsecops-tp` contenant ce monorepo (les workflows conservent ainsi les bons chemins) et adapter les badges ainsi que le sujet OIDC. Le dépôt existant s'appelle `TP-Integration`.
-2. Activer Secret Protection, Push protection, Dependabot alerts et security updates ; ajouter la capture d'écran réelle.
-3. Activer CodeQL en mode avancé avec le workflow fourni ; relever les alertes réelles initiales puis vérifier l'état corrigé.
-4. Après une première exécution, protéger `main` : PR obligatoire, contrôles requis `test`, `deps-audit`, `CodeQL` (sélectionner les noms réellement affichés ; `image` est aussi recommandé), interdiction de force push et suppression. Pour bloquer aussi les alertes CodeQL, activer la règle de résultats code scanning avec le seuil de sécurité adapté.
-5. Conserver les liens de PR/exécutions et la capture dans ce README avant de remettre l'URL publique.
+- Secret Protection, Push protection, alertes Dependabot et mises à jour de sécurité : activées et vérifiées par API.
+- CodeQL : workflow avancé exécuté, alerte supplémentaire corrigée, aucun résultat ouvert sur la version vérifiée.
+- Protection de `main` : PR obligatoire, branche à jour, contrôles `TP1 Python 3.12/3.13`, `TP2 Python 3.12/3.13`, `test`, `deps-audit`, `image` et résultat de sécurité `CodeQL` obligatoires ; règles applicables aux administrateurs ; force push et suppression interdits.
+- Le contrôle CodeQL requis est lié à l'application **GitHub Advanced Security**, afin qu'une alerte bloque la fusion même si le job d'analyse a réussi son exécution.
+- Déploiement AWS : préparé, désactivé par défaut ; aucune ressource AWS créée.
+
+La preuve API contient la date et le commit effectivement contrôlés. Les captures rouge/vert sont conservées dans [TP1/docs](../TP1/docs/).

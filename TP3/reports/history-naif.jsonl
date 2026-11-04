@@ -1,4 +1,4 @@
-{"Comment":"buildkit.dockerfile.v0","CreatedAt":"2026-11-04T14:10:44+01:00","CreatedBy":"CMD [\"npm\" \"start\"]","CreatedSince":"2026-11-04T14:10:44+01:00","ID":"sha256:5e26cdefa51a4c59e98c4cf3482d73322140684c8b0bc58516104a12fadbf994","Size":"0"}
+{"Comment":"buildkit.dockerfile.v0","CreatedAt":"2026-11-04T14:10:44+01:00","CreatedBy":"CMD [\"npm\" \"start\"]","CreatedSince":"2026-11-04T14:10:44+01:00","ID":"sha256:9d922642a73b22c38bb06f4d58431c70d3e7e0a1b7360a9ba158aa7abf68101a","Size":"0"}
 {"Comment":"buildkit.dockerfile.v0","CreatedAt":"2026-11-04T14:10:44+01:00","CreatedBy":"EXPOSE [3000/tcp]","CreatedSince":"2026-11-04T14:10:44+01:00","ID":"\u003cmissing\u003e","Size":"0"}
 {"Comment":"buildkit.dockerfile.v0","CreatedAt":"2026-11-04T14:10:44+01:00","CreatedBy":"RUN /bin/sh -c npm install # buildkit","CreatedSince":"2026-11-04T14:10:44+01:00","ID":"\u003cmissing\u003e","Size":"12541952"}
 {"Comment":"buildkit.dockerfile.v0","CreatedAt":"2026-11-04T14:10:41+01:00","CreatedBy":"COPY . . # buildkit","CreatedSince":"2026-11-04T14:10:41+01:00","ID":"\u003cmissing\u003e","Size":"52301824"}

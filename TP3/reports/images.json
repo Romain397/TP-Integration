@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-11-04T13:14:53.0388745Z",
+  "measuredAt": "2026-11-04T13:33:58.1337962Z",
   "platform": "linux/amd64",
   "trivy": "aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969",
   "smokeTest": "GET /health -> 200 {\"status\":\"ok\"}; USER node",
@@ -16,8 +16,8 @@
     },
     {
       "image": "devsecops-tp:optim",
-      "sizeBytes": 250030559,
-      "sizeMiB": 238.45,
+      "sizeBytes": 250887582,
+      "sizeMiB": 239.27,
       "layers": 9,
       "high": 0,
       "critical": 0,

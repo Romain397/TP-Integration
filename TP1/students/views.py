@@ -58,7 +58,12 @@ def _validate_student(payload, current_id=None):
 
 
 def _parse_id(raw_id):
-    return int(raw_id) if raw_id.isdigit() else None
+    if not raw_id.isascii() or not raw_id.isdecimal():
+        return None
+    try:
+        return int(raw_id)
+    except ValueError:
+        return None
 
 
 def _find_student(student_id):
@@ -106,6 +111,8 @@ def student_detail(request, raw_id):
 
 
 def student_stats(request):
+    if request.method != "GET":
+        return _error("Méthode non autorisée.", 405)
     by_field = {field: sum(student["field"] == field for student in data.students) for field in sorted(FIELDS)}
     average = round(sum(student["grade"] for student in data.students) / len(data.students), 2) if data.students else 0
     best = max(data.students, key=lambda student: student["grade"], default=None)
@@ -115,6 +122,8 @@ def student_stats(request):
 
 
 def search_students(request):
+    if request.method != "GET":
+        return _error("Méthode non autorisée.", 405)
     query = request.GET.get("q", "").strip()
     if not query:
         return _error("Le paramètre q est obligatoire.", 400)

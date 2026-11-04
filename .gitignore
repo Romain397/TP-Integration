@@ -12,3 +12,9 @@ htmlcov/
 **/.ruff_cache/
 .pytest_cache/
 **/.pytest_cache/
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+.artifacts/

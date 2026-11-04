@@ -2,7 +2,7 @@
 
 from datetime import date
 
-from orders.utils import parse_price
+from orders.utils import is_finite_number, parse_price
 
 DEFAULT_PROMO_CODES = [
     {"code": "BIENVENUE20", "type": "percentage", "value": 20, "minOrder": 15.0, "expiresAt": "2026-12-31"},
@@ -13,7 +13,7 @@ WEEKDAYS = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3, "friday": 
 
 
 def calculate_delivery_fee(distance, weight):
-    if not isinstance(distance, (int, float)) or not isinstance(weight, (int, float)):
+    if not is_finite_number(distance) or not is_finite_number(weight):
         raise ValueError("distance and weight must be numbers")
     if distance < 0 or weight < 0:
         raise ValueError("distance and weight cannot be negative")
@@ -31,6 +31,8 @@ def apply_promo_code(subtotal, promo_code, promo_codes=None, today=None):
         raise ValueError("Montant invalide.")
     if promo_code in (None, ""):
         return {"subtotal": subtotal, "discount": 0.0, "total": subtotal}
+    if not isinstance(promo_code, str):
+        raise ValueError("Le code promo doit être une chaîne.")
     codes = DEFAULT_PROMO_CODES if promo_codes is None else promo_codes
     promo = next((item for item in codes if item["code"] == promo_code), None)
     if promo is None:
@@ -41,10 +43,15 @@ def apply_promo_code(subtotal, promo_code, promo_codes=None, today=None):
         raise ValueError("Code promo expiré.")
     if subtotal < promo.get("minOrder", 0):
         raise ValueError("Montant minimum non atteint.")
+    value = promo.get("value")
+    if not is_finite_number(value) or value < 0:
+        raise ValueError("Valeur de promotion invalide.")
     if promo["type"] == "percentage":
-        total = subtotal * (1 - promo["value"] / 100)
+        if value > 100:
+            raise ValueError("Pourcentage de promotion invalide.")
+        total = subtotal * (1 - value / 100)
     elif promo["type"] == "fixed":
-        total = subtotal - promo["value"]
+        total = subtotal - value
     else:
         raise ValueError("Type de promotion invalide.")
     total = round(max(0, total), 2)
@@ -52,7 +59,7 @@ def apply_promo_code(subtotal, promo_code, promo_codes=None, today=None):
 
 
 def calculate_surge(hour, day_of_week):
-    if not isinstance(hour, (int, float)) or not 0 <= hour <= 24:
+    if not is_finite_number(hour) or not 0 <= hour <= 24:
         raise ValueError("hour must be between 0 and 24")
     day = day_of_week.lower() if isinstance(day_of_week, str) else ""
     if day not in WEEKDAYS:
@@ -66,27 +73,30 @@ def calculate_surge(hour, day_of_week):
         return 1.8
     if weekday <= 3 and 19 <= hour <= 21:
         return 1.5
-    if weekday <= 3 and 12 <= hour < 14:
+    if weekday <= 3 and 12 <= hour <= 13.5:
         return 1.3
     return 1.0
 
 
-def calculate_order_total(items, distance, weight, promo_code=None, hour=15, day_of_week="tuesday", promo_codes=None):
+def calculate_order_total(
+    items, distance, weight, promo_code=None, hour=15, day_of_week="tuesday", promo_codes=None, *, today=None
+):
     if not isinstance(items, list) or not items:
         raise ValueError("Le panier doit contenir au moins un article.")
     subtotal = 0.0
     for item in items:
         if (
             not isinstance(item, dict)
-            or not isinstance(item.get("price"), (int, float))
+            or not is_finite_number(item.get("price"))
             or not isinstance(item.get("quantity"), int)
+            or isinstance(item.get("quantity"), bool)
         ):
             raise ValueError("Article invalide.")
         if item["price"] < 0 or item["quantity"] <= 0:
             raise ValueError("Prix et quantité doivent être positifs.")
         subtotal += item["price"] * item["quantity"]
     subtotal = round(subtotal, 2)
-    promo = apply_promo_code(subtotal, promo_code, promo_codes)
+    promo = apply_promo_code(subtotal, promo_code, promo_codes, today=today)
     delivery = calculate_delivery_fee(distance, weight)
     if delivery is None:
         raise ValueError("Adresse hors zone de livraison.")

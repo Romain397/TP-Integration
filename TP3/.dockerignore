@@ -1,0 +1,8 @@
+# Liste d'autorisation : seuls le code de production et les manifestes sont envoyés.
+**
+!package.json
+!package-lock.json
+!src/
+!src/**
+!Dockerfile
+!.dockerignore

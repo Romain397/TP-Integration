@@ -1,0 +1,8 @@
+name: TP3 JavaScript security
+paths:
+  - TP3/src
+paths-ignore:
+  - TP3/baseline
+  - TP3/.artifacts
+queries:
+  - uses: security-extended

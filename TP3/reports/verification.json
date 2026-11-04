@@ -1,0 +1,75 @@
+{
+  "measuredAt": "2026-11-04T13:32:47.131Z",
+  "node": "v24.14.0",
+  "initialTests": {
+    "passed": 2,
+    "failed": 0
+  },
+  "beforeFix": {
+    "regressions": [
+      {
+        "name": "régression XSS : échappe le HTML fourni dans name",
+        "status": "failed"
+      },
+      {
+        "name": "régression injection de commande : rejette les métacaractères avant tout processus",
+        "status": "failed"
+      },
+      {
+        "name": "régression merge non maîtrisé : rejette les propriétés de prototype",
+        "status": "failed"
+      }
+    ],
+    "expectedFailure": true
+  },
+  "afterFix": {
+    "passed": 36,
+    "failed": 0,
+    "regressions": [
+      {
+        "name": "régression XSS : échappe le HTML fourni dans name",
+        "status": "passed"
+      },
+      {
+        "name": "régression injection de commande : rejette les métacaractères avant tout processus",
+        "status": "passed"
+      },
+      {
+        "name": "régression merge non maîtrisé : rejette les propriétés de prototype",
+        "status": "passed"
+      }
+    ]
+  },
+  "coveragePercent": {
+    "lines": 100,
+    "statements": 100,
+    "functions": 100,
+    "branches": 96.66
+  },
+  "audit": {
+    "before": {
+      "info": 0,
+      "low": 7,
+      "moderate": 16,
+      "high": 5,
+      "critical": 0,
+      "total": 28
+    },
+    "after": {
+      "info": 0,
+      "low": 3,
+      "moderate": 16,
+      "high": 0,
+      "critical": 0,
+      "total": 19
+    },
+    "production": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    }
+  }
+}

@@ -2,6 +2,11 @@
 
 import re
 import unicodedata
+from math import isfinite
+
+
+def is_finite_number(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and isfinite(value)
 
 
 def capitalize(text):
@@ -53,8 +58,10 @@ def group_by(items, key):
 
 def calculate_discount(price, discount_rules):
     """Apply percentage, fixed, and buy-X-get-Y rules sequentially."""
-    if not isinstance(price, (int, float)) or isinstance(price, bool) or price < 0:
+    if not is_finite_number(price) or price < 0:
         raise ValueError("price must be a non-negative number")
+    if discount_rules is not None and not isinstance(discount_rules, list):
+        raise ValueError("discount_rules must be a list")
     result = float(price)
     for rule in discount_rules or []:
         if not isinstance(rule, dict):
@@ -62,21 +69,21 @@ def calculate_discount(price, discount_rules):
         rule_type = rule.get("type")
         if rule_type == "percentage":
             value = rule.get("value")
-            if not isinstance(value, (int, float)) or not 0 <= value <= 100:
+            if not is_finite_number(value) or not 0 <= value <= 100:
                 raise ValueError("invalid percentage discount")
             result *= 1 - value / 100
         elif rule_type == "fixed":
             value = rule.get("value")
-            if not isinstance(value, (int, float)) or value < 0:
+            if not is_finite_number(value) or value < 0:
                 raise ValueError("invalid fixed discount")
             result -= value
         elif rule_type == "buyXgetY":
             buy, free, item_price = rule.get("buy"), rule.get("free"), rule.get("itemPrice")
-            if not all(isinstance(value, int) and value > 0 for value in (buy, free)):
+            if not all(isinstance(value, int) and not isinstance(value, bool) and value > 0 for value in (buy, free)):
                 raise ValueError("buy and free must be positive integers")
-            if not isinstance(item_price, (int, float)) or item_price <= 0:
+            if not is_finite_number(item_price) or item_price <= 0:
                 raise ValueError("itemPrice must be positive")
-            result -= int(result // (buy * item_price)) * free * item_price
+            result -= int(result // ((buy + free) * item_price)) * free * item_price
         else:
             raise ValueError("unknown discount rule")
         result = max(0, result)
@@ -101,6 +108,6 @@ def parse_price(value):
             return None
     else:
         return None
-    if amount < 0:
+    if not isfinite(amount) or amount < 0:
         return None
     return round(amount, 2)

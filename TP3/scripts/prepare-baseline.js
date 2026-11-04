@@ -4,10 +4,9 @@ const root = path.resolve(__dirname, '..');
 const target = path.join(root, '.artifacts', 'baseline');
 fs.mkdirSync(path.join(target, 'src'), { recursive: true });
 fs.mkdirSync(path.join(target, 'tests'), { recursive: true });
-for (const name of ['package.json', 'Dockerfile']) {
-  fs.copyFileSync(path.join(root, 'baseline', name), path.join(target, name));
-}
-const lockfile = path.join(root, 'baseline', 'package-lock.json');
+fs.copyFileSync(path.join(root, 'baseline', 'package.json.txt'), path.join(target, 'package.json'));
+fs.copyFileSync(path.join(root, 'baseline', 'Dockerfile'), path.join(target, 'Dockerfile'));
+const lockfile = path.join(root, 'baseline', 'package-lock.json.txt');
 if (fs.existsSync(lockfile)) fs.copyFileSync(lockfile, path.join(target, 'package-lock.json'));
 fs.copyFileSync(path.join(root, 'baseline', 'app.js.txt'), path.join(target, 'src', 'app.js'));
 fs.copyFileSync(path.join(root, 'src', 'index.js'), path.join(target, 'src', 'index.js'));

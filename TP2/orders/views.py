@@ -13,9 +13,12 @@ ORDERS = {}
 
 def _body(request):
     try:
-        return json.loads(request.body or b"{}")
+        payload = json.loads(request.body or b"{}")
     except (json.JSONDecodeError, UnicodeDecodeError):
         raise ValueError("JSON invalide.") from None
+    if not isinstance(payload, dict):
+        raise ValueError("Le corps JSON doit être un objet.")
+    return payload
 
 
 def _calculate(data):

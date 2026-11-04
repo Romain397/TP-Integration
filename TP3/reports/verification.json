@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-11-04T13:09:49.174Z",
+  "measuredAt": "2026-11-04T13:32:47.131Z",
   "node": "v24.14.0",
   "initialTests": {
     "passed": 2,
@@ -23,7 +23,7 @@
     "expectedFailure": true
   },
   "afterFix": {
-    "passed": 35,
+    "passed": 36,
     "failed": 0,
     "regressions": [
       {

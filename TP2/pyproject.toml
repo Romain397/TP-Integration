@@ -25,6 +25,7 @@ select = ["E", "F", "I"]
 [tool.coverage.run]
 branch = true
 source = ["orders"]
+omit = ["orders/test_*.py", "orders/tests.py"]
 
 [tool.coverage.report]
 fail_under = 80

@@ -14,18 +14,12 @@
         "jest-runtime",
         "jest-snapshot"
       ],
-      "effects": [
-        "jest"
-      ],
+      "effects": [],
       "range": ">=25.2.0-alpha.86",
       "nodes": [
         "node_modules/@jest/core"
       ],
-      "fixAvailable": {
-        "name": "jest",
-        "version": "25.1.0",
-        "isSemVerMajor": true
-      }
+      "fixAvailable": true
     },
     "@jest/expect": {
       "name": "@jest/expect",
@@ -72,11 +66,7 @@
       "nodes": [
         "node_modules/@jest/reporters"
       ],
-      "fixAvailable": {
-        "name": "jest",
-        "version": "25.1.0",
-        "isSemVerMajor": true
-      }
+      "fixAvailable": true
     },
     "@jest/transform": {
       "name": "@jest/transform",
@@ -96,11 +86,7 @@
       "nodes": [
         "node_modules/@jest/transform"
       ],
-      "fixAvailable": {
-        "name": "jest",
-        "version": "25.1.0",
-        "isSemVerMajor": true
-      }
+      "fixAvailable": true
     },
     "babel-jest": {
       "name": "babel-jest",
@@ -262,12 +248,18 @@
         "@jest/core",
         "jest-config"
       ],
-      "effects": [],
+      "effects": [
+        "jest"
+      ],
       "range": ">=25.2.0-alpha.86",
       "nodes": [
         "node_modules/jest-cli"
       ],
-      "fixAvailable": true
+      "fixAvailable": {
+        "name": "jest",
+        "version": "25.1.0",
+        "isSemVerMajor": true
+      }
     },
     "jest-config": {
       "name": "jest-config",
@@ -430,12 +422,12 @@
       "total": 19
     },
     "dependencies": {
-      "prod": 70,
+      "prod": 74,
       "dev": 335,
       "optional": 34,
       "peer": 0,
       "peerOptional": 0,
-      "total": 404
+      "total": 408
     }
   }
 }

@@ -102,9 +102,7 @@ class StudentApiTests(TestCase):
     def test_stats_returns_expected_fields(self):
         response = self.client.get("/students/stats")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            set(response.json()), {"totalStudents", "averageGrade", "studentsByField", "bestStudent"}
-        )
+        self.assertEqual(set(response.json()), {"totalStudents", "averageGrade", "studentsByField", "bestStudent"})
         self.assertEqual(response.json()["totalStudents"], 5)
         self.assertEqual(response.json()["averageGrade"], 16.1)
         self.assertEqual(response.json()["bestStudent"]["id"], 5)
@@ -123,3 +121,29 @@ class StudentApiTests(TestCase):
         response = self.client.get("/students/search?q=nonexistent")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), [])
+
+    def test_unicode_digit_id_returns_400_instead_of_crashing(self):
+        response = self.client.get("/students/²")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.json())
+
+    def test_stats_and_search_reject_post_as_json(self):
+        for url in ["/students/stats", "/students/search?q=Ahmed"]:
+            with self.subTest(url=url):
+                response = self.client.post(url)
+                self.assertEqual(response.status_code, 405)
+                self.assertIn("error", response.json())
+
+    def test_create_rejects_malformed_and_non_object_json(self):
+        for body in ["{", "null", "[]"]:
+            with self.subTest(body=body):
+                response = self.client.post("/students", body, content_type="application/json")
+                self.assertEqual(response.status_code, 400)
+
+    def test_stats_handles_empty_directory(self):
+        data.students.clear()
+        response = self.client.get("/students/stats")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["totalStudents"], 0)
+        self.assertEqual(response.json()["averageGrade"], 0)
+        self.assertIsNone(response.json()["bestStudent"])
